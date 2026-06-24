@@ -595,30 +595,114 @@
     }
   });
 
-  /* ---------- Abstimmung (Session-Zählung im Speicher) ---------- */
-  const votes={upgrade:7,eigene:11}; // Start-Stimmen, damit der Stand nicht leer wirkt
-  let meine=null;
-  function renderVotes(){
-    const total=votes.upgrade+votes.eigene;
-    ['upgrade','eigene'].forEach(o=>{
-      const pct=total?Math.round(votes[o]/total*100):0;
-      document.getElementById('bar-'+o).style.width=pct+'%';
-      document.getElementById('pct-'+o).textContent=pct+' %';
-    });
-    document.getElementById('vote-total').textContent=total+' Stimmen abgegeben'+(meine?' — deine Wahl: '+(meine==='upgrade'?'Upgrade':'Eigene Karte'):'');
+  /* ---------- Abstimmung (Live-Anbindung via jsonBin.io) ---------- */
+  const BIN_ID = '6a3c447dda38895dfef98f74';
+  const API_KEY = '$2a$10$fnOKVId1o9sJ/WTP4iM/4O.WAU466ChcoiKrS1UNrkpDdAsEioETS';
+  
+  const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  let meineWahl = localStorage.getItem('vcard_wahl'); // Speichert die Wahl im Browser
+
+  // 1. Stimmen vom Server laden und UI aktualisieren
+  async function loadVotes() {
+    try {
+      const response = await fetch(`${API_URL}/latest`, {
+        headers: { 'X-Master-Key': API_KEY }
+      });
+      if (!response.ok) throw new Error('Fehler beim Laden der Stimmen');
+      
+      const resData = await response.json();
+      const votes = resData.record;
+
+      renderVotes(votes);
+    } catch (error) {
+      console.error(error);
+      document.getElementById('vote-total').textContent = 'Fehler beim Laden der Live-Ergebnisse.';
+    }
   }
-  document.querySelectorAll('.vote-opt').forEach(opt=>{
-    opt.onclick=()=>{
-      const o=opt.dataset.opt;
-      if(meine===o) return;
-      if(meine) votes[meine]--;
-      votes[o]++; meine=o;
-      document.querySelectorAll('.vote-opt').forEach(x=>x.classList.remove('gewaehlt'));
-      opt.classList.add('gewaehlt');
-      renderVotes();
+
+  // 2. Prozentbalken und Texte berechnen & anzeigen
+  function renderVotes(votes) {
+    const total = votes.upgrade + votes.eigene;
+    
+    ['upgrade', 'eigene'].forEach(o => {
+      const pct = total ? Math.round((votes[o] / total) * 100) : 0;
+      document.getElementById('bar-' + o).style.width = pct + '%';
+      document.getElementById('pct-' + o).textContent = pct + ' %';
+      
+      // Visuelles Feedback, wenn diese Option bereits gewählt wurde
+      const optEl = document.querySelector(`.vote-opt[data-opt="${o}"]`);
+      if (meineWahl === o) {
+        optEl.classList.add('gewaehlt');
+      } else {
+        optEl.classList.remove('gewaehlt');
+      }
+    });
+
+    let infoText = total + ' Stimmen abgegeben';
+    if (meineWahl) {
+      infoText += ' — deine Wahl: ' + (meineWahl === 'upgrade' ? 'Upgrade' : 'Eigene Karte');
+    }
+    document.getElementById('vote-total').textContent = infoText;
+  }
+
+  // 3. Neue Stimme abgeben oder Wahl ändern
+  async function vote(neueWahl) {
+    if (meineWahl === neueWahl) return; // Klick auf bereits gewählte Option ignoriere
+
+    // Visuelles Feedback sperren/laden anzeigen
+    document.getElementById('vote-total').textContent = 'Stimme wird übertragen...';
+
+    try {
+      // Aktuellen Stand live holen (um Überschreiben anderer Nutzer zu minimieren)
+      const response = await fetch(`${API_URL}/latest`, {
+        headers: { 'X-Master-Key': API_KEY }
+      });
+      const resData = await response.json();
+      let aktuelleVotes = resData.record;
+
+      // Wenn vorher schon mal abgestimmt wurde, alte Stimme abziehen
+      if (meineWahl && aktuelleVotes[meineWahl] > 0) {
+        aktuelleVotes[meineWahl]--;
+      }
+
+      // Neue Stimme dazuzählen
+      aktuelleVotes[neueWahl]++;
+
+      // Update an jsonBin.io senden
+      const updateResponse = await fetch(API_URL, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': API_KEY
+        },
+        body: JSON.stringify(aktuelleVotes)
+      });
+
+      if (!updateResponse.ok) throw new Error('Fehler beim Speichern der Stimme');
+
+      // Wahl lokal im Browser merken
+      meineWahl = neueWahl;
+      localStorage.setItem('vcard_wahl', neueWahl);
+
+      // UI neu rendern
+      renderVotes(aktuelleVotes);
+
+    } catch (error) {
+      console.error(error);
+      document.getElementById('vote-total').textContent = 'Senden fehlgeschlagen. Bitte versuche es noch einmal.';
+    }
+  }
+
+  // Event-Listener an die Boxen hängen
+  document.querySelectorAll('.vote-opt').forEach(opt => {
+    opt.onclick = () => {
+      const o = opt.dataset.opt;
+      vote(o);
     };
   });
-  renderVotes();
+
+  // Beim Laden der Seite sofort die echten Daten holen
+  loadVotes();
 
   /* ---------- Interne Sprung-Links zuverlässig scrollen ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(link=>{
