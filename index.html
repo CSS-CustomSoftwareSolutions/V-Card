@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V-CARD 7 — Eine Woche Vorarlberg</title>
+<style>
+  :root{
+    --rot:#e30613;        /* Vorarlberg-Rot */
+    --rot-dunkel:#b30410;
+    --schwarz:#16161a;
+    --weiss:#ffffff;
+    --grau:#f4f4f2;
+    --grau-linie:#e3e3df;
+    --grau-text:#6b6b6b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--schwarz);
+    background:var(--weiss);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---------- Kopf ---------- */
+  header{
+    background:var(--rot);
+    color:var(--weiss);
+    padding:18px 0;
+    position:sticky;top:0;z-index:50;
+  }
+  .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .logo{display:flex;align-items:baseline;gap:0;font-weight:700;font-size:22px;letter-spacing:.5px}
+  .logo .klammer{font-weight:300;opacity:.85}
+  nav{display:flex;flex-wrap:wrap;gap:0 6px;justify-content:flex-end}
+  nav a{color:var(--weiss);text-decoration:none;font-size:14px;margin-left:22px;opacity:.92;padding-bottom:3px;border-bottom:2px solid transparent;transition:border-color .2s}
+  nav a:hover{border-color:var(--weiss)}
+
+  /* ---------- Hero ---------- */
+  .hero{background:var(--schwarz);color:var(--weiss);padding:84px 0 76px;position:relative;overflow:hidden}
+  .hero .wrap{position:relative;z-index:2}
+  .eyebrow{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--rot);font-weight:700;margin-bottom:18px}
+  .hero h1{font-size:clamp(38px,7vw,76px);line-height:1.02;font-weight:800;letter-spacing:-1.5px;max-width:14ch}
+  .hero h1 em{font-style:normal;color:var(--rot)}
+  .hero p.lead{font-size:clamp(17px,2.2vw,21px);max-width:48ch;margin-top:22px;color:#d9d9d9}
+  .hero-cta{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-block;background:var(--rot);color:#fff;border:none;padding:15px 30px;font-size:15px;font-weight:700;border-radius:2px;cursor:pointer;text-decoration:none;transition:background .2s,transform .1s}
+  .btn:hover{background:var(--rot-dunkel)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;border:2px solid #fff;padding:13px 28px}
+  .btn.ghost:hover{background:#fff;color:var(--schwarz)}
+  /* dezente Bergsilhouette */
+  .berge{position:absolute;left:0;right:0;bottom:0;height:160px;z-index:1;opacity:.5}
+
+  /* ---------- Sektionen ---------- */
+  section.block{padding:72px 0;border-bottom:1px solid var(--grau-linie)}
+  .sec-head{margin-bottom:38px}
+  .sec-head .eyebrow{color:var(--rot)}
+  .sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.5px;margin-top:8px}
+  .sec-head p{color:var(--grau-text);max-width:60ch;margin-top:12px;font-size:16px}
+
+  /* ---------- Vergleich V-CARD ---------- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:720px){.compare{grid-template-columns:1fr}}
+  .card{border:1px solid var(--grau-linie);border-radius:6px;padding:28px;background:var(--weiss)}
+  .card.highlight{border:2px solid var(--rot);position:relative}
+  .card.highlight .tag{position:absolute;top:-12px;left:24px;background:var(--rot);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:1px}
+  .card h3{font-size:22px;margin-bottom:4px}
+  .kartentyp{font-size:14px;color:var(--grau-text);font-weight:600;letter-spacing:.3px;margin:6px 0 2px;text-transform:uppercase}
+  .card ul{list-style:none;margin-top:16px}
+  .card li{padding:7px 0 7px 26px;position:relative;font-size:15px;border-top:1px solid var(--grau)}
+  .card li:before{content:"✓";position:absolute;left:0;color:var(--rot);font-weight:700}
+  .card-btn{margin-top:20px;width:100%;text-align:center}
+
+  /* ---------- 7-Tage Planer ---------- */
+  .planer{display:grid;grid-template-columns:1fr 1.1fr;gap:32px;align-items:start}
+  @media(max-width:820px){.planer{grid-template-columns:1fr}}
+  .tage{display:flex;flex-wrap:wrap;gap:8px}
+  .tag-btn{border:1px solid var(--grau-linie);background:#fff;border-radius:4px;padding:10px 0;width:calc(33.33% - 6px);text-align:center;cursor:pointer;font-weight:700;font-size:14px;transition:all .15s}
+  .tag-btn .d{display:block;font-size:11px;color:var(--grau-text);font-weight:400;text-transform:uppercase;letter-spacing:1px}
+  .tag-btn:hover{border-color:var(--rot)}
+  .tag-btn.aktiv{background:var(--rot);color:#fff;border-color:var(--rot)}
+  .tag-btn.aktiv .d{color:#fff;opacity:.8}
+  .tag-panel{background:var(--grau);border-radius:6px;padding:30px;min-height:280px}
+  .tag-panel .num{font-size:13px;letter-spacing:2px;color:var(--rot);font-weight:700;text-transform:uppercase}
+  .tag-panel h4{font-size:26px;margin:6px 0 14px;font-weight:800}
+  .tag-panel p{font-size:16px;color:#333}
+  .tag-panel .ort{display:inline-block;margin-top:18px;background:#fff;border:1px solid var(--grau-linie);border-radius:20px;padding:6px 14px;font-size:13px;margin-right:8px}
+
+  /* ---------- Abstimmung ---------- */
+  .vote-wrap{background:var(--schwarz);color:#fff;border-radius:8px;padding:42px 34px}
+  .vote-wrap h3{font-size:24px;text-align:center;margin-bottom:6px}
+  .vote-wrap .sub{text-align:center;color:#bbb;font-size:14px;margin-bottom:28px}
+  .vote-options{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:560px){.vote-options{grid-template-columns:1fr}}
+  .vote-opt{background:#26262c;border:2px solid #3a3a42;border-radius:6px;padding:22px;cursor:pointer;transition:border-color .2s,background .2s;text-align:center}
+  .vote-opt:hover{border-color:var(--rot)}
+  .vote-opt h5{font-size:18px;margin-bottom:6px}
+  .vote-opt p{font-size:13px;color:#aaa;min-height:34px}
+  .vote-opt .bar{height:10px;background:#3a3a42;border-radius:5px;margin-top:16px;overflow:hidden}
+  .vote-opt .bar span{display:block;height:100%;width:0;background:var(--rot);transition:width .6s ease}
+  .vote-opt .pct{margin-top:8px;font-weight:800;font-size:20px}
+  .vote-opt.gewaehlt{border-color:var(--rot);background:#2f2026}
+  .vote-total{text-align:center;color:#888;font-size:13px;margin-top:22px}
+
+  /* ---------- Rechner ---------- */
+  .rechner{background:var(--grau);border-radius:8px;padding:38px 34px}
+  .rechner label{display:block;font-weight:700;margin-bottom:6px;font-size:15px}
+  .rechner .slider-row{margin-bottom:26px}
+  .rechner input[type=range]{width:100%;accent-color:var(--rot);height:6px}
+  .rechner .val{color:var(--rot);font-weight:800}
+  .picker{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--grau-linie);border-radius:30px;padding:11px 18px;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;min-height:46px}
+  .chip span{font-size:18px}
+  .chip:hover{border-color:var(--rot)}
+  .chip.on{background:var(--rot);color:#fff;border-color:var(--rot)}
+  .ergebnis{background:#fff;border:2px solid var(--rot);border-radius:6px;padding:24px;text-align:center;margin-top:10px}
+  .ergebnis .gross{font-size:40px;font-weight:800;color:var(--rot)}
+  .ergebnis .label{font-size:14px;color:var(--grau-text);text-transform:uppercase;letter-spacing:1px}
+  .ergebnis .hint{margin-top:12px;font-size:15px;font-weight:700}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--rot);color:#fff;padding:46px 0 38px;text-align:center}
+  footer .logo{justify-content:center;margin-bottom:14px}
+  footer p{font-size:13px;opacity:.9;max-width:50ch;margin:0 auto}
+  footer .disc{margin-top:18px;font-size:11px;opacity:.7}
+
+  .mehr-wrap{text-align:center;margin-top:34px}
+  .mehr-wrap .btn{min-width:240px}
+
+  :focus-visible{outline:3px solid #fff;outline-offset:2px}
+
+  /* ---------- Alle Ziele ---------- */
+  .filter-bar{margin-bottom:18px}
+  #suche{width:100%;padding:14px 18px;font-size:16px;border:1px solid var(--grau-linie);border-radius:6px;font-family:inherit;margin-bottom:14px}
+  #suche:focus{outline:none;border-color:var(--rot)}
+  .filter-chips{display:flex;flex-wrap:wrap;gap:9px}
+  .f-chip{border:1px solid var(--grau-linie);background:#fff;border-radius:30px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;min-height:42px;display:inline-flex;align-items:center;gap:7px}
+  .f-chip:hover{border-color:var(--rot)}
+  .f-chip.on{background:var(--rot);color:#fff;border-color:var(--rot)}
+  .f-chip .dot{width:10px;height:10px;border-radius:50%}
+  .ziel-count{font-size:14px;color:var(--grau-text);margin:16px 0}
+  .ziel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .ziel{border:1px solid var(--grau-linie);border-left:4px solid var(--rot);border-radius:5px;padding:13px 15px;background:#fff}
+  .ziel .name{font-weight:700;font-size:15px;line-height:1.25}
+  .ziel .meta{font-size:13px;color:var(--grau-text);margin-top:3px}
+  .ziel .kat{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:7px;padding:2px 8px;border-radius:3px;color:#fff}
+  .leer{grid-column:1/-1;text-align:center;color:var(--grau-text);padding:30px}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ================= HANDY-OPTIMIERUNG ================= */
+  @media(max-width:760px){
+    .wrap{padding:0 18px}
+
+    /* Kopf: Logo links, Navi als scrollbare Leiste darunter */
+    header{padding:14px 0}
+    .header-inner{flex-direction:column;align-items:stretch;gap:10px}
+    .logo{font-size:20px;justify-content:center}
+    nav{justify-content:center;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;padding-bottom:2px}
+    nav a{margin:0 12px;font-size:13px}
+
+    /* Hero kompakter */
+    .hero{padding:54px 0 60px}
+    .hero h1{letter-spacing:-1px}
+    .hero p.lead{font-size:17px}
+    .hero-cta{flex-direction:column}
+    .hero-cta .btn{width:100%;text-align:center}
+
+    section.block{padding:48px 0}
+    .sec-head{margin-bottom:28px}
+
+    /* Karten/Vergleich gestapelt mit mehr Luft */
+    .card{padding:24px}
+
+    /* 7-Tage-Planer: Buttons als 2 Reihen à mehr Breite, Panel darunter */
+    .tag-btn{width:calc(25% - 6px);padding:12px 0;font-size:15px;min-height:48px}
+    .tag-panel{padding:24px;min-height:0}
+    .tag-panel h4{font-size:22px}
+
+    /* Rechner mehr Tap-Platz für die Slider */
+    .rechner{padding:28px 22px}
+    .rechner input[type=range]{height:30px}
+    .ergebnis .gross{font-size:34px}
+
+    /* Abstimmung */
+    .vote-wrap{padding:32px 20px}
+    .vote-wrap h3{font-size:20px}
+    .vote-opt{padding:20px;min-height:48px}
+
+    /* Alle Ziele */
+    .ziel-grid{grid-template-columns:1fr 1fr;gap:9px}
+    #suche{font-size:16px}
+  }
+
+  /* sehr schmale Geräte (z.B. iPhone SE) */
+  @media(max-width:380px){
+    .tag-btn{width:calc(33.33% - 6px)}
+    .hero h1{font-size:32px}
+    nav a{margin:0 9px}
+  }
+
+  /* Touch-Geräte: Hover-Effekte nicht „kleben" lassen, größere Trefferflächen */
+  @media(hover:none){
+    .btn,.tag-btn,.vote-opt{-webkit-tap-highlight-color:transparent}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="logo">V&middot;CARD<span class="klammer">&nbsp;[7]</span></div>
+    <nav>
+      <a href="#variante">Die Variante</a>
+      <a href="#planer">7-Tage-Planer</a>
+      <a href="#" id="nav-alle">Alle Ziele</a>
+      <a href="#abstimmung">Mitentscheiden</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="berge" viewBox="0 0 1440 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,160 L0,90 L220,30 L420,110 L650,20 L900,120 L1140,40 L1440,100 L1440,160 Z" fill="#26262c"/>
+    <path d="M0,160 L0,120 L300,70 L560,130 L820,60 L1100,130 L1440,80 L1440,160 Z" fill="#1d1d22"/>
+  </svg>
+  <div class="wrap">
+    <div class="eyebrow">Projekt &middot; Produktmanagement</div>
+    <h1>Sieben Tage. <em>Ein Land.</em> Eine Karte.</h1>
+    <p class="lead">Die V-CARD gibt es bisher für die ganze Saison. Aber was, wenn du nur eine Woche bleibst? Wir denken die V-CARD neu — als 7-Tage-Variante.</p>
+    <div class="hero-cta">
+      <a href="#planer" class="btn">Woche planen</a>
+      <a href="#abstimmung" class="btn ghost">Mitentscheiden</a>
+    </div>
+  </div>
+</section>
+
+<!-- VARIANTE / VERGLEICH -->
+<section class="block" id="variante">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Die Idee</div>
+      <h2>Eine Karte für genau deinen Urlaub</h2>
+      <p>Über 90 Ausflugsziele in ganz Vorarlberg und Liechtenstein — Bergbahnen, Schwimmbäder, Museen und mehr. Jedes Ziel einmal kostenlos, bei den Bergbahnen eine Berg- und Talfahrt am selben Tag. Bisher nur als Saisonkarte. Die 7-Tage-Variante macht das auch für Kurzurlauber möglich.</p>
+    </div>
+    <div class="compare">
+      <div class="card">
+        <h3>V-CARD Saison</h3>
+        <div class="kartentyp">Die bewährte Karte</div>
+        <ul>
+          <li>Gültig 1. Mai – 31. Oktober</li>
+          <li>Über 90 Ausflugsziele inklusive</li>
+          <li>Bergbahnen, Bäder &amp; Museen</li>
+          <li>Ideal für Einheimische &amp; Dauergäste</li>
+        </ul>
+        <button class="btn card-btn" data-kauf="Saison">Kaufen</button>
+      </div>
+      <div class="card highlight">
+        <span class="tag">NEU</span>
+        <h3>V-CARD 7</h3>
+        <div class="kartentyp">Für deine Urlaubswoche</div>
+        <ul>
+          <li>7 frei wählbare Tage</li>
+          <li>Bergbahnen, Bäder &amp; Museen inklusive</li>
+          <li>Perfekt für eine Urlaubswoche</li>
+          <li>Digital aufs Handy, sofort startklar</li>
+        </ul>
+        <button class="btn card-btn" data-kauf="V-CARD 7">Kaufen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7-TAGE PLANER (interaktiv) -->
+<section class="block" id="planer">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Interaktiv</div>
+      <h2>Plan deine 7 Tage</h2>
+      <p>Klick dich durch die Woche und sieh, wie viel in sieben Tagen mit der V-CARD 7 drinsteckt.</p>
+    </div>
+    <div class="planer">
+      <div class="tage" id="tage"></div>
+      <div class="tag-panel" id="panel">
+        <div class="num" id="p-num">Tag 1</div>
+        <h4 id="p-titel"></h4>
+        <p id="p-text"></p>
+        <div id="p-orte"></div>
+      </div>
+    </div>
+    <div class="mehr-wrap">
+      <button class="btn" id="mehr-btn">Alle 90+ Ziele anzeigen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ALLE ZIELE (interaktiv: Filter + Suche) -->
+<section class="block" id="alle" style="display:none">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Alle Ausflugsziele</div>
+      <h2>Über 90 Ziele — alle inklusive</h2>
+      <p>Such dir raus, was dich interessiert. Filtere nach Art oder tippe einen Ort ein. Alles hier ist mit der V-CARD 7 abgedeckt.</p>
+    </div>
+    <div class="filter-bar">
+      <input type="search" id="suche" placeholder="Ort oder Ziel suchen, z. B. Bregenz oder Bad …" aria-label="Ziele suchen">
+      <div class="filter-chips" id="filter-chips"></div>
+    </div>
+    <div class="ziel-count" id="ziel-count"></div>
+    <div class="ziel-grid" id="ziel-grid"></div>
+  </div>
+</section>
+
+<!-- ABSTIMMUNG (interaktiv) -->
+<section class="block" id="abstimmung" style="border-bottom:none">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Deine Stimme zählt</div>
+      <h2>Upgrade oder eigene Karte?</h2>
+      <p>Soll die 7-Tage-Variante ein Upgrade zur bestehenden V-CARD sein — oder eine komplett eigene Karte? Stimm ab und sieh sofort, wie die anderen entschieden haben.</p>
+    </div>
+    <div class="vote-wrap">
+      <h3>Wie soll die V-CARD 7 umgesetzt werden?</h3>
+      <div class="sub">Tippe auf eine Option — du kannst deine Wahl ändern.</div>
+      <div class="vote-options">
+        <div class="vote-opt" data-opt="upgrade">
+          <h5>Als Upgrade</h5>
+          <p>Aufpreis auf eine bestehende Karte</p>
+          <div class="bar"><span id="bar-upgrade"></span></div>
+          <div class="pct" id="pct-upgrade">0&nbsp;%</div>
+        </div>
+        <div class="vote-opt" data-opt="eigene">
+          <h5>Eigene Karte</h5>
+          <p>Komplett neues, eigenes Produkt</p>
+          <div class="bar"><span id="bar-eigene"></span></div>
+          <div class="pct" id="pct-eigene">0&nbsp;%</div>
+        </div>
+      </div>
+      <div class="vote-total" id="vote-total">Noch keine Stimmen — mach den Anfang!</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">V&middot;CARD<span class="klammer">&nbsp;[7]</span></div>
+    <p>Eine Woche Vorarlberg, eine Karte. Ein Konzept-Entwurf im Rahmen unseres Produktmanagement-Projekts.</p>
+    <p class="disc">Projektarbeit — kein offizielles Angebot der Vorarlberg Tourismus GmbH. Preise und Leistungen sind beispielhaft.</p>
+  </div>
+</footer>
+
+<script>
+  /* ---------- 7-Tage-Planer ---------- */
+  const tage = [
+    {t:"Ankommen am Bodensee",txt:"Reinkommen mit Blick über drei Länder: rauf auf den Pfänder, danach gemütlich eine Runde auf dem See und ein Sprung ins kühle Nass.",orte:["Pfänderbahn (Bregenz)","Vorarlberg Lines – Schifffahrt","Strandbad Lochau","Martinsturm Bregenz"]},
+    {t:"Kultur in Bregenz",txt:"Regentag oder einfach Lust auf Kunst? Kunsthaus und vorarlberg museum liegen wenige Schritte auseinander, danach noch ein Abstecher in den Bregenzerwald.",orte:["Kunsthaus Bregenz","vorarlberg museum","Frauenmuseum Hittisau","Werkraum Andelsbuch"]},
+    {t:"Dornbirn entdecken",txt:"Natur und Stadt an einem Tag: erst die inatura, dann mit der Karrenseilbahn rauf auf den Hausberg und zum Abschluss ins Bad.",orte:["inatura Dornbirn","Karrenseilbahn","das stadtbad Dornbirn","Stadtmuseum Dornbirn"]},
+    {t:"Bregenzerwald",txt:"Handwerk und Schmalspur-Romantik: durch die Museen des Waldes, eine Fahrt mit dem Wälderbähnle und rauf mit der Seilbahn.",orte:["Wälderbähnle Bezau","Angelika Kauffmann Museum","Juppenwerkstatt Riefensberg","Seilbahn Laterns"]},
+    {t:"Wasser-Tag",txt:"Egal ob Sonne oder Schauer: über 25 Frei- und Hallenbäder sind inklusive — von der Erlebnis-Therme bis zum Badesee.",orte:["VAL BLU (Bludenz)","Waldbad Enz (Dornbirn)","Mountain Beach (Gaschurn)","Walgaubad Nenzing"]},
+    {t:"Berge am Arlberg",txt:"Hoch hinaus: Berg- und Talfahrt inklusive. Oben die Aussicht genießen, unten in Feldkirch die Burg erkunden.",orte:["Rüfikopf Seilbahn (Lech)","Muttersbergbahn (Bludenz)","Schattenburg (Feldkirch)","Lechmuseum Huber-Hus"]},
+    {t:"Kleinwalsertal & Montafon",txt:"Zum Abschluss noch einmal alpin: rauf mit der Kanzelwandbahn, danach gemütlich mit dem Bummelzug oder durchs Montafon ausklingen.",orte:["Kanzelwandbahn (Riezlern)","Vermuntbahn (Partenen)","Seewaldsee Bummelzug","Alpin- & Tourismusmuseum Gaschurn"]}
+  ];
+  const tageEl = document.getElementById('tage');
+  tage.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='tag-btn'+(i===0?' aktiv':'');
+    b.innerHTML='<span class="d">Tag</span>'+(i+1);
+    b.onclick=()=>zeigeTag(i,b);
+    tageEl.appendChild(b);
+  });
+  function zeigeTag(i,btn){
+    document.querySelectorAll('.tag-btn').forEach(x=>x.classList.remove('aktiv'));
+    btn.classList.add('aktiv');
+    document.getElementById('p-num').textContent='Tag '+(i+1);
+    document.getElementById('p-titel').textContent=tage[i].t;
+    document.getElementById('p-text').textContent=tage[i].txt;
+    document.getElementById('p-orte').innerHTML=tage[i].orte.map(o=>'<span class="ort">'+o+'</span>').join('');
+  }
+  zeigeTag(0,document.querySelector('.tag-btn'));
+
+  /* ---------- Kaufen-Buttons (Demo) ---------- */
+  document.querySelectorAll('.card-btn').forEach(b=>{
+    b.onclick=()=>{
+      const alt=b.textContent;
+      b.textContent='In den Warenkorb ✓';
+      b.style.background='var(--rot-dunkel)';
+      setTimeout(()=>{b.textContent=alt;b.style.background='';},1600);
+    };
+  });
+
+
+  /* ---------- Alle Ziele (Filter + Suche) ---------- */
+  const KAT = {
+    berg:{label:"Bergbahn",farbe:"#e30613"},
+    museum:{label:"Museum",farbe:"#8a5a00"},
+    bad:{label:"Schwimmbad",farbe:"#0a6ebd"},
+    sonst:{label:"Sonstiges",farbe:"#4a7c2f"},
+    bonus:{label:"Bonuspartner",farbe:"#6b3fa0"}
+  };
+  const ZIELE = [
+    {n:"Pfänderbahn",o:"Bregenz",k:"berg"},
+    {n:"vorarlberg museum",o:"Bregenz",k:"museum"},
+    {n:"Kunsthaus Bregenz (KUB)",o:"Bregenz",k:"museum"},
+    {n:"Martinsturm",o:"Bregenz",k:"museum"},
+    {n:"Textildruckmuseum Mittelweiherburg",o:"Hard",k:"museum"},
+    {n:"Kunst im Rohnerhaus",o:"Lauterach",k:"museum"},
+    {n:"Strandbad Bregenz",o:"Bregenz",k:"bad"},
+    {n:"Seebad Bregenz",o:"Bregenz",k:"bad"},
+    {n:"Strandbad Hard",o:"Hard",k:"bad"},
+    {n:"Strandbad Lochau",o:"Lochau",k:"bad"},
+    {n:"Minigolfplatz Hard",o:"Hard",k:"sonst"},
+    {n:"Karrenseilbahn",o:"Dornbirn",k:"berg"},
+    {n:"inatura Erlebnis Naturschau",o:"Dornbirn",k:"museum"},
+    {n:"Museum Biererlebniswelt Mohrenbrauerei",o:"Dornbirn",k:"museum"},
+    {n:"FFA Museum",o:"Altenrhein",k:"museum"},
+    {n:"Stadtmuseum",o:"Dornbirn",k:"museum"},
+    {n:"FLATZ Museum – Zentrum für Photographie",o:"Dornbirn",k:"museum"},
+    {n:"Krippenmuseum",o:"Dornbirn",k:"museum"},
+    {n:"Kunstraum Dornbirn",o:"Dornbirn",k:"museum"},
+    {n:"S-MAK Stickerei-Museum",o:"Lustenau",k:"museum"},
+    {n:"Rhein-Schauen Museum + Rheinbähnle",o:"Lustenau",k:"museum"},
+    {n:"Waldbad Enz",o:"Dornbirn",k:"bad"},
+    {n:"das stadtbad",o:"Dornbirn",k:"bad"},
+    {n:"Parkbad Lustenau",o:"Lustenau",k:"bad"},
+    {n:"Messe Dornbirn – Herbstmesse",o:"Dornbirn",k:"sonst"},
+    {n:"Jüdisches Museum",o:"Hohenems",k:"museum"},
+    {n:"Museum Stoffels Säge-Mühle",o:"Hohenems",k:"museum"},
+    {n:"Franz-Schubert-Museum",o:"Hohenems",k:"museum"},
+    {n:"Schubertiade-Museum",o:"Hohenems",k:"museum"},
+    {n:"Legge-Museum",o:"Hohenems",k:"museum"},
+    {n:"Elisabeth-Schwarzkopf-Museum",o:"Hohenems",k:"museum"},
+    {n:"Nibelungen-Museum",o:"Hohenems",k:"museum"},
+    {n:"Schuhmacher-Museum",o:"Hohenems",k:"museum"},
+    {n:"Alte-Zeiten-Museum",o:"Hohenems",k:"museum"},
+    {n:"Erholungszentrum Rheinauen",o:"Hohenems/Altach",k:"bad"},
+    {n:"Schwimmbad in der Riebe",o:"Götzis",k:"bad"},
+    {n:"Sesselbahn Laterns-Gapfohl",o:"Laterns",k:"berg"},
+    {n:"Seilbahn Schnifis",o:"Schnifis",k:"berg"},
+    {n:"Schattenburgmuseum",o:"Feldkirch",k:"museum"},
+    {n:"Vorarlberger Museumswelt",o:"Frastanz",k:"museum"},
+    {n:"Kunstmuseum Liechtenstein + Hilti Art Foundation",o:"Vaduz",k:"museum"},
+    {n:"Liechtensteinisches LandesMuseum",o:"Vaduz",k:"museum"},
+    {n:"Erlebnis Waldbad",o:"Feldkirch",k:"bad"},
+    {n:"Schwimmbad Felsenau",o:"Frastanz",k:"bad"},
+    {n:"Naturbad Untere Au",o:"Frastanz",k:"bad"},
+    {n:"Walgaubad",o:"Nenzing",k:"bad"},
+    {n:"Erlebnisbad Frutzau",o:"Sulz",k:"bad"},
+    {n:"Mittwochsführungen (Stadtführung)",o:"Feldkirch",k:"sonst"},
+    {n:"Bergbahnen Brandnertal",o:"Brandnertal",k:"berg"},
+    {n:"Seilbahn Sonntag-Stein",o:"Sonntag",k:"berg"},
+    {n:"Museum Großes Walsertal",o:"Sonntag",k:"museum"},
+    {n:"Seewaldsee Bummelzug",o:"Fontanella",k:"sonst"},
+    {n:"Museum Bezau",o:"Bezau",k:"museum"},
+    {n:"Egg Museum",o:"Egg",k:"museum"},
+    {n:"Werkraum Bregenzerwald",o:"Andelsbuch",k:"museum"},
+    {n:"Barockbaumeister Museum",o:"Au",k:"museum"},
+    {n:"Frauenmuseum",o:"Hittisau",k:"museum"},
+    {n:"Juppenwerkstatt",o:"Riefensberg",k:"museum"},
+    {n:"Angelika Kauffmann Museum",o:"Schwarzenberg",k:"museum"},
+    {n:"Freibad Au",o:"Au",k:"bad"},
+    {n:"Schwimmbad Bezau",o:"Bezau",k:"bad"},
+    {n:"Schwimmbad Egg",o:"Egg",k:"bad"},
+    {n:"Freibad Hittisau",o:"Hittisau",k:"bad"},
+    {n:"Schwimmbad Mellau",o:"Mellau",k:"bad"},
+    {n:"Waldbad Schoppernau",o:"Schoppernau",k:"bad"},
+    {n:"Schwimmbad Schwarzenberg",o:"Schwarzenberg",k:"bad"},
+    {n:"Kanzelwandbahn",o:"Riezlern",k:"berg"},
+    {n:"Bergschau & Skimuseum",o:"Hirschegg",k:"museum"},
+    {n:"Freibad Riezlern",o:"Riezlern",k:"bad"},
+    {n:"Rüfikopf Seilbahn",o:"Lech",k:"berg"},
+    {n:"Bergbahn Oberlech",o:"Oberlech",k:"berg"},
+    {n:"Petersboden Sessellift",o:"Oberlech",k:"berg"},
+    {n:"Zugerbergbahn",o:"Lech",k:"berg"},
+    {n:"Seekopfbahn",o:"Zürs",k:"berg"},
+    {n:"Lechmuseum Huber-Hus",o:"Lech",k:"museum"},
+    {n:"Lechmuseum Wang-Hus",o:"Lech",k:"museum"},
+    {n:"Lecher Waldschwimmbad",o:"Lech",k:"bad"},
+    {n:"Burgwald Bike-Trail",o:"Lech",k:"sonst"},
+    {n:"Muttersbergbahn",o:"Bludenz",k:"berg"},
+    {n:"Sonnenkopf",o:"Klösterle",k:"berg"},
+    {n:"Stadtmuseum",o:"Bludenz",k:"museum"},
+    {n:"Klostertal Museum",o:"Wald am Arlberg",k:"museum"},
+    {n:"Freibad Val Blu",o:"Bludenz",k:"bad"},
+    {n:"Hallenbad Val Blu",o:"Bludenz",k:"bad"},
+    {n:"Schwimmbad Braz",o:"Braz",k:"bad"},
+    {n:"Freibad Dalaas",o:"Dalaas",k:"bad"},
+    {n:"Almwasserpark",o:"Klösterle",k:"bad"},
+    {n:"Bergbahnen Gargellen",o:"Gargellen",k:"berg"},
+    {n:"Vermuntbahn",o:"Partenen",k:"berg"},
+    {n:"Museum Frühmesshaus",o:"Bartholomäberg",k:"museum"},
+    {n:"Montafoner Heimatmuseum",o:"Schruns",k:"museum"},
+    {n:"Montafoner Bergbaumuseum",o:"Silbertal",k:"museum"},
+    {n:"Alpin- & Tourismusmuseum",o:"Gaschurn",k:"museum"},
+    {n:"Alpenbad Montafon",o:"Schruns-Tschagguns",k:"bad"},
+    {n:"Mountain Beach Freizeitpark",o:"Gaschurn",k:"bad"},
+    {n:"Allwetterbad Aquarena",o:"St. Gallenkirch",k:"bad"},
+    {n:"Schwimmbad Partenen",o:"Partenen",k:"bad"},
+    {n:"Rätikonbad",o:"Vandans",k:"bad"},
+    {n:"Vorarlberg Lines Bodenseeschifffahrt",o:"Bregenz",k:"bonus"},
+    {n:"Bodenseeguides Stadt- & Kulturführungen",o:"Bodensee",k:"bonus"},
+    {n:"Ländle SUP",o:"Lochau & Bregenz",k:"bonus"},
+    {n:"Surfmax SUP Station",o:"Hard & Bregenz",k:"bonus"},
+    {n:"Historische Schifffahrt Bodensee",o:"Hard",k:"bonus"},
+    {n:"Bootsverleih",o:"Hard",k:"bonus"},
+    {n:"HIGHMATRAUSCH Trampolin & Actionpark",o:"Dornbirn",k:"bonus"},
+    {n:"Messe Dornbirn – Gustav",o:"Dornbirn",k:"bonus"},
+    {n:"Wälderbähnle",o:"Bezau",k:"bonus"},
+    {n:"Brauerei Fohrenburg",o:"Bludenz",k:"bonus"},
+    {n:"Skinfit Shops",o:"Vorarlberg",k:"bonus"},
+    {n:"Aquaria Erlebnisbad",o:"Oberstaufen",k:"bonus"},
+    {n:"Reality Escape",o:"Bregenz",k:"bonus"},
+    {n:"Poolbar Festival",o:"Feldkirch",k:"bonus"},
+    {n:"Food Campus Arbogast",o:"Arbogast",k:"bonus"},
+  ];
+  let aktKat = "alle";
+  let suchText = "";
+
+  // Filter-Chips bauen
+  const fchips = document.getElementById("filter-chips");
+  const katReihe = [["alle","Alle"],["berg","Bergbahnen"],["bad","Schwimmbäder"],["museum","Museen"],["sonst","Sonstige"],["bonus","Bonuspartner"]];
+  katReihe.forEach(([k,label],idx)=>{
+    const c=document.createElement("button");
+    c.className="f-chip"+(idx===0?" on":"");
+    const dot = k!=="alle" ? '<span class="dot" style="background:'+KAT[k].farbe+'"></span>' : '';
+    c.innerHTML=dot+label;
+    c.onclick=()=>{
+      aktKat=k;
+      document.querySelectorAll(".f-chip").forEach(x=>x.classList.remove("on"));
+      c.classList.add("on");
+      renderZiele();
+    };
+    fchips.appendChild(c);
+  });
+
+  const grid=document.getElementById("ziel-grid");
+  const countEl=document.getElementById("ziel-count");
+  document.getElementById("suche").addEventListener("input",e=>{
+    suchText=e.target.value.trim().toLowerCase();
+    renderZiele();
+  });
+
+  function renderZiele(){
+    const liste=ZIELE.filter(z=>{
+      const passtKat = aktKat==="alle" || z.k===aktKat;
+      const passtSuche = !suchText || z.n.toLowerCase().includes(suchText) || z.o.toLowerCase().includes(suchText);
+      return passtKat && passtSuche;
+    });
+    countEl.textContent = liste.length+" von "+ZIELE.length+" Zielen";
+    if(!liste.length){
+      grid.innerHTML='<div class="leer">Nichts gefunden. Versuch einen anderen Suchbegriff.</div>';
+      return;
+    }
+    grid.innerHTML=liste.map(z=>{
+      const kat=KAT[z.k];
+      return '<div class="ziel">'+
+        '<div class="name">'+z.n+'</div>'+
+        '<div class="meta">'+z.o+'</div>'+
+        '<span class="kat" style="background:'+kat.farbe+'">'+kat.label+'</span>'+
+        '</div>';
+    }).join("");
+  }
+  renderZiele();
+
+  /* ---------- "Mehr anzeigen" schaltet den Ziele-Bereich frei ---------- */
+  const mehrBtn=document.getElementById('mehr-btn');
+  const alleSec=document.getElementById('alle');
+  let offen=false;
+  mehrBtn.addEventListener('click',()=>{
+    offen=!offen;
+    alleSec.style.display=offen?'block':'none';
+    mehrBtn.textContent=offen?'Ziele ausblenden':'Alle 90+ Ziele anzeigen';
+    if(offen){
+      const kopf=document.querySelector('header');
+      const offset=(kopf?kopf.offsetHeight:0)+8;
+      const y=alleSec.getBoundingClientRect().top+window.pageYOffset-offset;
+      window.scrollTo({top:y,behavior:'smooth'});
+      const s=document.getElementById('suche');
+      if(s) setTimeout(()=>s.focus({preventScroll:true}),300);
+    }
+  });
+  const navAlle=document.getElementById('nav-alle');
+  if(navAlle) navAlle.addEventListener('click',e=>{
+    e.preventDefault();
+    if(!offen) mehrBtn.click();
+    else{
+      const kopf=document.querySelector('header');
+      const offset=(kopf?kopf.offsetHeight:0)+8;
+      const y=alleSec.getBoundingClientRect().top+window.pageYOffset-offset;
+      window.scrollTo({top:y,behavior:'smooth'});
+    }
+  });
+
+  /* ---------- Abstimmung (Session-Zählung im Speicher) ---------- */
+  const votes={upgrade:7,eigene:11}; // Start-Stimmen, damit der Stand nicht leer wirkt
+  let meine=null;
+  function renderVotes(){
+    const total=votes.upgrade+votes.eigene;
+    ['upgrade','eigene'].forEach(o=>{
+      const pct=total?Math.round(votes[o]/total*100):0;
+      document.getElementById('bar-'+o).style.width=pct+'%';
+      document.getElementById('pct-'+o).textContent=pct+' %';
+    });
+    document.getElementById('vote-total').textContent=total+' Stimmen abgegeben'+(meine?' — deine Wahl: '+(meine==='upgrade'?'Upgrade':'Eigene Karte'):'');
+  }
+  document.querySelectorAll('.vote-opt').forEach(opt=>{
+    opt.onclick=()=>{
+      const o=opt.dataset.opt;
+      if(meine===o) return;
+      if(meine) votes[meine]--;
+      votes[o]++; meine=o;
+      document.querySelectorAll('.vote-opt').forEach(x=>x.classList.remove('gewaehlt'));
+      opt.classList.add('gewaehlt');
+      renderVotes();
+    };
+  });
+  renderVotes();
+
+  /* ---------- Interne Sprung-Links zuverlässig scrollen ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(link=>{
+    link.addEventListener('click',e=>{
+      const id=link.getAttribute('href').slice(1);
+      const ziel=document.getElementById(id);
+      if(!ziel) return;
+      e.preventDefault();
+      const kopf=document.querySelector('header');
+      const offset=(kopf?kopf.offsetHeight:0)+8;
+      const y=ziel.getBoundingClientRect().top+window.pageYOffset-offset;
+      window.scrollTo({top:y,behavior:'smooth'});
+    });
+  });
+</script>
+</body>
+</html>
